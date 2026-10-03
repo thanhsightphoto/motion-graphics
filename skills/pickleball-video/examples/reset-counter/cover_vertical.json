@@ -1,0 +1,24 @@
+{
+ "frame": "inputs/cover_frame_wide.png",
+ "out": "out/cover_instagram_1080x1920.png",
+ "width": 1080,
+ "height": 1920,
+ "layout": "stack",
+ "photoAspect": "1.2778",
+ "chip": "Pickleball · Kitchen defense",
+ "title": "Reset & Counter",
+ "subtitle": "Don't counter blind. Read it first.",
+ "rules": [
+  {
+   "tag": "No read",
+   "text": "Block & reset"
+  },
+  {
+   "tag": "Good read",
+   "text": "Counter",
+   "accent": true
+  }
+ ],
+ "bg": "inputs/cover_frame_vertical.png",
+ "cardTop": 300
+}

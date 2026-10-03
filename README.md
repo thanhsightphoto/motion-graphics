@@ -5,6 +5,7 @@ Motion-graphics skills for Claude Code. Each skill does one job. The first one i
 | Skill | What it does |
 |---|---|
 | `motion-broll` | Give it a video and a transcript and it makes motion-graphic B-roll timed to your words. |
+| `pickleball-video` | Give it a raw pickleball drill clip and it makes an Instagram Reel: technique animations, a trim that never cuts mid-rally, English subtitles, a 9:16 cover and a caption. Built on `motion-broll`. |
 
 More skills will be added to this repo.
 
@@ -62,6 +63,33 @@ It never invents numbers or results. Bars show relative size and text uses skele
 - Every frame is a pure function of time. Springs are closed-form step responses, and a value that changes target many times is the sum of one spring per change. There are no CSS transitions or timers, so any frame can be rendered on its own.
 - Clips are small HTML files on a shared engine (`skills/motion-broll/engine/motion.js`). Headless Chromium captures 4 sub-frames per frame across a 180° shutter, and ffmpeg blends them into motion blur.
 - The worked example in `skills/motion-broll/examples/opus-aoe2/` is the six clips from the demo above.
+
+## pickleball-video
+
+**A pickleball coaching clip in, an Instagram Reel out.** Point it at a drill video and tell it the lesson in your own
+words ("no read → block & reset, good read → counter"). It runs seven steps and stops for you at four checkpoints:
+
+1. **Transcribe** the coach (any language; quiet court audio is normalized) and write English subtitle lines.
+2. **Plan 5+ graphics** around your lesson: full-frame cutaways, or transparent panels in the sky over the live rally
+   when the camera leaves room. *You approve the plan.*
+3. **Build and render** them (paddle face, swing path, spin, decision cards), then send a full-length preview.
+   *You ask for changes until it's right.*
+4. **Trim** to your target length (2:30–3:00). Rallies are found from the sound of paddle hits and every cut lands on
+   a dead ball, never mid-rally. *You approve the cuts.*
+5. **Burn in English subtitles** on top of everything.
+6. **Make a 9:16 Reels cover**: title, a zoomed-out shot with both players, and the rules.
+7. **Write the caption.**
+
+```
+/pickleball-video 2ndvideo/my drill.mp4
+Focus: <the lesson in your words>
+```
+
+Each video gets its own folder in `videos/<name>/` (git-ignored: footage and renders stay local). The finished files
+land in `videos/<name>/out/`: `preview.mp4` (ready to post), the cover, `subtitles_en.srt`, the individual clips and
+`TIMING.md`. The skill's `examples/` holds the animations from the first two videos as starting points.
+
+**Extra requirements:** whisper.cpp (`whisper-cli`) with the large-v3 model, and Python 3 with numpy.
 
 ## Licence
 

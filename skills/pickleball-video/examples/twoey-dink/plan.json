@@ -1,0 +1,66 @@
+{
+  "title": "Twoey dink vs no-spin and heavy slice (trimmed to 2:57)",
+  "video": "work/trimmed.mp4",
+  "fps": "30000/1001",
+  "clips": [
+    {
+      "id": "00",
+      "title": "Title: The twoey dink",
+      "line": "Opening title over the first rally",
+      "in": 0.0,
+      "out": 5.5,
+      "kind": "panel",
+      "file": "out/00-title_0m00s00.mov"
+    },
+    {
+      "id": "01",
+      "title": "Heavy slice: open face, swing straight up, not forward",
+      "line": "“When they put spin on it, you lift it up… you can't flick it forward, go forward and it's in the net.”",
+      "in": 21.2,
+      "out": 32.8,
+      "kind": "full",
+      "file": "out/01-heavy-slice_0m21s20.mp4"
+    },
+    {
+      "id": "02",
+      "title": "No spin: face ~20° closed, swing more forward",
+      "line": "“If I feed you a ball with no pace, then you add a little more power. Just like table tennis.”",
+      "in": 32.8,
+      "out": 40.9,
+      "kind": "full",
+      "file": "out/02-no-spin_0m32s80.mp4"
+    },
+    {
+      "id": "03",
+      "title": "Hips lift the arm: stand up, make an arc",
+      "line": "“Use your hips to help lift the arm… stand up, don't move forward… make an arc.”",
+      "in": 61.0,
+      "out": 74.5,
+      "kind": "full",
+      "file": "out/03-hips-arc_1m01s00.mp4"
+    },
+    {
+      "id": "04",
+      "title": "Sidespin: angled face drops, square face goes up",
+      "line": "“It's already cutting sideways… close the face at an angle and it drops… meet it square and direct so it goes up.”",
+      "in": 101.7,
+      "out": 116.1,
+      "kind": "full",
+      "file": "out/04-sidespin-face_1m41s70.mp4"
+    },
+    {
+      "id": "05",
+      "title": "Read the ball: two rules side by side",
+      "line": "“Your technique isn't the problem. The problem is how you meet the ball, at what moment, with which ball.”",
+      "in": 166.2,
+      "out": 176.6,
+      "kind": "full",
+      "file": "out/05-read-the-ball_2m46s20.mp4"
+    }
+  ],
+  "notes": [
+    "Timeline is the trimmed 2:57 cut (work/trimmed.mp4). Source cuts removed: 0:10.0–0:31.8, 1:35.0–1:51.7, 2:52.9–3:09.8, 3:52.5–end.",
+    "Paddle angles, swing paths and ball flights are schematic, not measured from the footage.",
+    "Quoted lines are English translations of the coach's Vietnamese; the English subtitles are burned into preview.mp4 only."
+  ]
+}

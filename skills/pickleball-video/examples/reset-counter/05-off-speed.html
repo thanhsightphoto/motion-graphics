@@ -1,0 +1,44 @@
+<title>05 Off-speed is still a speed-up</title>
+<style>
+.col{position:absolute;top:-150px;width:500px;height:220px;border-radius:28px;background:#F6F4F0}
+.col .nm{position:absolute;left:28px;top:20px;font-size:40px;font-weight:600;letter-spacing:-.025em;white-space:nowrap}
+.col .tg{position:absolute;left:28px;top:160px;font-size:24px;font-weight:600;border-radius:999px;padding:7px 16px;background:#FF5A1F;color:#fff;white-space:nowrap}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lpill"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em">Partner's attack</div></div>
+  <div class="L" id="Lcard">
+    <div class="col" id="cL" style="left:-525px"><div class="nm">Drive</div>
+      <svg class="a" style="left:0;top:0" width="500" height="220" viewBox="0 0 500 220"><path id="pD" d="M 40 120 L 440 110" pathLength="1" fill="none" stroke="#0B0B0B" stroke-width="7" stroke-linecap="round"/><polygon id="hD" points="0,-13 22,0 0,13" fill="#0B0B0B"/>
+        <g id="sl" opacity=".35" stroke="#0B0B0B" stroke-width="3" stroke-linecap="round"><line x1="60" y1="98" x2="160" y2="96"/><line x1="90" y1="140" x2="190" y2="138"/></g></svg>
+      <div class="tg" id="g1">Still a speed-up</div></div>
+    <div class="col" id="cR" style="left:25px"><div class="nm">Off-speed</div>
+      <svg class="a" style="left:0;top:0" width="500" height="220" viewBox="0 0 500 220"><path id="pO" d="M 40 125 Q 230 50 440 120" pathLength="1" fill="none" stroke="#0B0B0B" stroke-width="7" stroke-linecap="round" stroke-dasharray="0.04 0.03"/><polygon id="hO" points="0,-13 22,0 0,13" fill="#0B0B0B"/></svg>
+      <div class="tg" id="g2">Still a speed-up</div></div>
+    <div class="a" id="ban" style="left:-525px;top:110px;display:flex;align-items:center;gap:14px;font-size:34px;font-weight:600;letter-spacing:-.015em;white-space:nowrap"><span style="color:#FF5A1F">Same read:</span>Block &amp; reset or Counter</div>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+const T=9.0;
+const head=(p,h,u)=>{const L=p.getTotalLength(),a=p.getPointAtLength(L*Math.max(0.001,u)),b=p.getPointAtLength(Math.max(0,L*u-2));h.setAttribute('transform',`translate(${a.x} ${a.y}) rotate(${Math.atan2(a.y-b.y,a.x-b.x)*180/Math.PI})`);h.style.opacity=u>0.08?1:0;};
+const colIn=(el,t0,t)=>{const v=M.vis(t,t0,null,{din:0,lin:0.3}); el.style.opacity=v.o; el.style.transform=`translateY(${(1-v.a)*18}px)`; el.style.filter=v.blur>0.05?`blur(${v.blur}px)`:'none';};
+const pop=(el,t0,t)=>{const a=M.S(t-t0,16,0.72);el.style.transform=`scale(${Math.max(0,a).toFixed(4)})`;el.style.opacity=M.clamp(a*1.5);el.style.transformOrigin='0 50%';};
+M.scene({
+  W:1920,H:1080,bg:null,T,intro:0.1,center:[960,250],
+  SH:{pill:{w:440,h:112,r:56,bg:'#0B0B0B',cam:1.1}, card:{w:1100,h:380,r:40,bg:'#FFFFFF',cam:1.0}},
+  start:'pill', SEQ:[[0.5,'card']],
+  layers:[
+    {el:'Lpill',tin:null,tout:0.5},
+    {el:'Lcard',tin:0.5,tout:null,update:(t)=>{
+      colIn($('cL'),0.7,t); colIn($('cR'),1.4,t);
+      // the drive is fast, the off-speed rolls in slower
+      const uD=M.eio((t-1.0)/0.35); $('pD').style.strokeDasharray='1 1'; $('pD').style.strokeDashoffset=1-uD; head($('pD'),$('hD'),uD); $('sl').style.opacity=0.35*M.clamp((t-1.1)/0.2);
+      const uO=M.eio((t-1.7)/1.0); $('pO').style.opacity=1; const L=1; $('pO').style.strokeDashoffset=0;
+      $('pO').setAttribute('stroke-dasharray',`${(0.04).toFixed(3)} 0.03`); $('pO').style.clipPath=`inset(0 ${(100-100*uO).toFixed(2)}% 0 0)`; head($('pO'),$('hO'),uO);
+      pop($('g1'),3.7,t); pop($('g2'),3.85,t);
+      colIn($('ban'),5.2,t);
+    }},
+  ],
+  geom:(t,g)=>{const e=M.eio((t-(T-0.6))/0.45); g.sc*=1-0.3*e; g.op*=1-e; return g;},
+});
+</script>

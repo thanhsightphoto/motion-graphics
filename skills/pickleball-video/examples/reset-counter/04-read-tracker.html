@@ -1,0 +1,37 @@
+<title>04 Read tracker: good reads called live</title>
+<style>
+.pl{position:absolute;display:flex;align-items:center;gap:14px;transform:translate(-50%,-50%);white-space:nowrap;color:#fff;font-size:30px;font-weight:600;letter-spacing:-.01em}
+.cnt{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:46px;border-radius:23px;background:#FF5A1F;color:#fff;font-size:28px;font-weight:600}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lp"><div class="pl"><span id="icP"></span>Good reads called<span class="cnt" id="nP">0</span></div></div>
+  <div class="L" id="Lb">
+    <div class="a" style="left:-250px;top:-62px;font-size:46px;font-weight:600;letter-spacing:-.025em;white-space:nowrap">Good read</div>
+    <div class="a" style="left:-250px;top:4px;display:flex;align-items:center;gap:10px;font-size:34px;font-weight:600;color:#FF5A1F;white-space:nowrap"><span id="icA"></span>Counter</div>
+    <div class="a" style="left:150px;top:-50px;width:100px;height:100px;border-radius:50px;background:#0B0B0B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:600" id="nB">1</div>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+$('icP').innerHTML=M.icon('check',30,'#FF5A1F',3.2); $('icA').innerHTML=M.icon('arrow',32,'#FF5A1F',3);
+const T=33.5;
+// "Good read" calls on the audio (clip-local): 57.8, 74.5, 81.7 in the source
+const CALL=[4.8,21.5,28.7], HOLD=2.8;
+const SEQ=[]; CALL.forEach(c=>{SEQ.push([c,'big'],[c+HOLD,'pill']);});
+const count=t=>CALL.filter(c=>t>=c+0.25).length;
+const winBig=CALL.map(c=>[c,c+HOLD]), winPill=[[null,CALL[0]],[CALL[0]+HOLD,CALL[1]],[CALL[1]+HOLD,CALL[2]],[CALL[2]+HOLD,null]];
+const show=(el,wins,t,g)=>{let best={o:0,blur:0,s:1};for(const [a,b] of wins){const v=M.vis(t,a,b,{din:0.05,lin:0.22,lout:0.1}); if(v.o>best.o) best=v;}
+  if(best.o<0.002){el.style.display='none';return;} el.style.display=''; el.style.opacity=best.o; el.style.filter=best.blur>0.05?`blur(${best.blur}px)`:'none';
+  el.style.left=(g.w/2)+'px'; el.style.top=(g.h/2)+'px'; el.style.transform=`scale(${best.s})`;};
+M.scene({
+  W:1920,H:1080,bg:null,T,intro:0.1,center:[1400,130],
+  SH:{pill:{w:440,h:84,r:42,bg:'#0B0B0B',cam:1.0}, big:{w:560,h:170,r:40,bg:'#FFFFFF',cam:1.0}},
+  start:'pill', SEQ,
+  extra:(t,g)=>{
+    show($('Lp'),winPill,t,g); show($('Lb'),winBig,t,g);
+    M.setText($('nP'),String(count(t))); M.setText($('nB'),String(Math.max(1,count(t))));
+    const k=CALL.findIndex(c=>t>=c&&t<c+0.5); $('nB').style.transform=`scale(${k>=0?1+0.2*Math.sin(Math.PI*M.clamp((t-CALL[k]-0.15)/0.35)):1})`;
+  },
+  geom:(t,g)=>{const e=M.eio((t-(T-0.6))/0.45); g.sc*=1-0.3*e; g.op*=1-e; return g;},
+});
+</script>

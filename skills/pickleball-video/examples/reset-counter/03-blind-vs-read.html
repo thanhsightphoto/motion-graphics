@@ -1,0 +1,94 @@
+<title>03 Blind counter vs read first</title>
+<style>
+.ttl{position:absolute;left:-580px;top:-182px;font-size:40px;font-weight:600;letter-spacing:-.025em;white-space:nowrap}
+.res{position:absolute;left:230px;top:-176px;display:flex;align-items:center;gap:12px;font-size:32px;font-weight:600;letter-spacing:-.015em;white-space:nowrap}
+.lb{position:absolute;top:166px;font-size:22px;font-weight:500;color:#8A8782;white-space:nowrap}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lpill"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em">Most players counter everything</div></div>
+  <div class="L" id="Lcard">
+    <div class="ttl" id="ttl"></div>
+    <div class="res" id="res"><span id="resI"></span><span id="resT"></span></div>
+    <div class="lb" style="left:-580px">Partner · speeds up</div>
+    <div class="lb" style="left:470px">You</div>
+    <div class="lb" style="left:-140px;top:166px">kitchen</div>
+    <svg class="a" style="left:-620px;top:-200px" width="1240" height="400" viewBox="-620 -200 1240 400">
+     <g transform="translate(40 -14) scale(1.15)">
+      <rect x="-170" y="150" width="340" height="8" rx="4" fill="#F1EFEB"/>
+      <line x1="-560" y1="150" x2="500" y2="150" stroke="#E2DFD9" stroke-width="4" stroke-linecap="round"/>
+      <rect x="-6" y="30" width="12" height="120" rx="4" fill="#0B0B0B"/>
+      <path id="pIn" d="M -380 0 Q -100 -20 165 40" fill="none"/>
+      <path id="pNet" d="M 165 40 Q 80 70 8 100" fill="none" stroke="#B9B5AE" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>
+      <path id="pPop" d="M 165 40 Q 80 -260 -150 -30" fill="none" stroke="#B9B5AE" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>
+      <line id="smash" x1="-150" y1="-30" x2="170" y2="125" stroke="#D93A2B" stroke-width="4" stroke-dasharray="1 1" stroke-linecap="round" pathLength="1"/>
+      <polygon id="smashH" points="0,-11 20,0 0,11" fill="#D93A2B"/>
+      <path id="pReset" d="M 165 40 Q 40 -150 -90 140" fill="none" stroke="#B9B5AE" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>
+      <path id="pCtr" d="M 165 35 Q 40 -70 -300 135" fill="none" stroke="#B9B5AE" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>
+      <g id="pad">
+        <rect x="-7" y="-60" width="14" height="100" rx="7" fill="#0B0B0B"/>
+        <rect x="-12" y="-52" width="5" height="84" rx="2.5" fill="#FF5A1F"/>
+        <rect x="-4.5" y="40" width="9" height="40" rx="4.5" fill="#8A8782"/>
+        <line x1="-16" y1="-40" x2="-52" y2="-40" stroke="#FF5A1F" stroke-width="4" stroke-linecap="round"/><polygon points="-50,-49 -66,-40 -50,-31" fill="#FF5A1F"/>
+      </g>
+      <g id="ball"><circle r="14" fill="#FFFFFF" stroke="#0B0B0B" stroke-width="3.5"/></g>
+      <g id="speed"><line x1="-36" y1="-6" x2="-70" y2="-6" stroke="#0B0B0B" stroke-width="3" stroke-linecap="round" opacity=".35"/><line x1="-30" y1="6" x2="-58" y2="6" stroke="#0B0B0B" stroke-width="3" stroke-linecap="round" opacity=".35"/></g>
+      <g transform="translate(8 100)"><g id="x1"><circle r="24" fill="#D93A2B"/><path d="M -8 -8 L 8 8 M 8 -8 L -8 8" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></g></g>
+      <g transform="translate(170 125)"><g id="x2"><circle r="24" fill="#D93A2B"/><path d="M -8 -8 L 8 8 M 8 -8 L -8 8" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></g></g>
+      <g transform="translate(-90 105)"><g id="c1"><circle r="24" fill="#0B0B0B"/><path d="M -10 1 L -3 8 L 11 -7" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+      <g transform="translate(-300 100)"><g id="c2"><circle r="24" fill="#FF5A1F"/><path d="M -10 1 L -3 8 L 11 -7" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+     </g>
+    </svg>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+const T=17.0, PX=190, PY=40;
+const at=(p,u)=>{const L=p.getTotalLength();return p.getPointAtLength(L*M.clamp(u));};
+const pop=(el,t0,t,t1=99)=>{const a=M.S(t-t0,16,0.72)*(1-M.clamp((t-t1)/0.25));el.style.transform=`scale(${Math.max(0,a).toFixed(4)})`;el.style.opacity=M.clamp(a*1.5);};
+const trail=(el,t0,t1,t)=>{el.style.opacity=t<t0?0:0.9*(1-M.clamp((t-t1)/0.3));};
+// phases: [incoming start, contact, out path, out duration, end of phase]
+const PH=[
+  {inS:1.8, hit:2.3, path:'pNet',   dur:0.4, end:3.6},
+  {inS:3.9, hit:4.4, path:'pPop',   dur:0.8, end:7.0},
+  {inS:7.6, hit:8.1, path:'pReset', dur:0.9, end:10.6},
+  {inS:11.2,hit:11.7,path:'pCtr',   dur:0.5, end:99},
+];
+const TITLE=[[1.4,'Blind counter'],[7.2,'No read → Block & reset'],[10.8,'Good read → Counter']];
+const RES=[[2.8,'Into the net','x'],[5.3,'Pops up → put away','x'],[7.2,'',''],[9.1,'Drops in their kitchen','c'],[10.8,'',''],[12.3,'At their feet','c']];
+// paddle angle: + = open (top tilts back, away from the net)
+const ang=M.track(10,[[2.12,40,M.FAST],[2.25,-25,M.FAST],[3.6,10],[4.22,40,M.FAST],[4.35,-25,M.FAST],[7.2,15],[10.9,-5]]);
+const dx=M.track(0,[[8.1,8,M.FAST],[8.4,0],[11.6,-30,M.FAST],[11.9,0]]);
+const dy=M.track(0,[[10.9,-15]]);
+const swap=(el,keys,t,fn)=>{let k=-1;keys.forEach((x,j)=>{if(t>=x[0])k=j;}); if(k<0){el.style.opacity=0;return;}
+  if(keys[k][1]===''){el.style.opacity=0;return;} fn(keys[k]); const v=M.vis(t,keys[k][0],keys[k+1]?keys[k+1][0]-0.1:null,{din:0,lin:0.24,lout:0.1}); el.style.opacity=v.o; el.style.filter=v.blur>0.05?`blur(${v.blur}px)`:'none';};
+M.scene({
+  W:1920,H:1080,bg:null,T,intro:0.1,center:[960,250],
+  SH:{pill:{w:780,h:112,r:56,bg:'#0B0B0B',cam:1.0}, card:{w:1240,h:400,r:40,bg:'#FFFFFF',cam:1.0}},
+  start:'pill', SEQ:[[1.4,'card']],
+  layers:[
+    {el:'Lpill',tin:null,tout:1.4},
+    {el:'Lcard',tin:1.4,tout:null,update:(t)=>{
+      swap($('ttl'),TITLE,t,k=>M.setText($('ttl'),k[1]));
+      swap($('res'),RES,t,k=>{ if($('res')._k!==k[1]){ $('resT').textContent=k[1]; $('resI').innerHTML=k[2]==='x'?M.icon('x',30,'#D93A2B',3.2):M.icon('check',30,'#FF5A1F',3.2); $('res').style.color=k[2]==='x'?'#D93A2B':'#0B0B0B'; $('res')._k=k[1]; }});
+      $('pad').setAttribute('transform',`translate(${PX+dx(t)} ${PY+dy(t)}) rotate(${ang(t).toFixed(2)})`);
+      // ball
+      let b={x:-380,y:0}, bo=0, fast=0;
+      for(const ph of PH){
+        if(t>=ph.inS-0.15 && t<ph.end){
+          if(t<ph.hit){ b=at($('pIn'),(t-ph.inS)/(ph.hit-ph.inS)); bo=M.clamp((t-ph.inS+0.15)/0.15); fast=1; }
+          else { b=at($(ph.path),M.eio((t-ph.hit)/ph.dur)); bo=1-M.clamp((t-(ph.end-0.3))/0.25); fast=0;
+            if(ph.path==='pPop'&&t>ph.hit+ph.dur){ const u=M.eio((t-5.4)/0.3); b={x:-150+320*u,y:-30+155*u}; }
+            if(ph.path==='pNet'&&t>ph.hit+ph.dur){ const u=M.eo((t-2.7)/0.4); b={x:8,y:100+40*u*u}; } }
+        }
+      }
+      $('ball').setAttribute('transform',`translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`); $('ball').style.opacity=bo;
+      $('speed').setAttribute('transform',`translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})${b.x>0&&t>2.3&&t<12?'':''}`); $('speed').style.opacity=fast*bo;
+      trail($('pNet'),2.3,3.5,t); trail($('pPop'),4.4,6.9,t); trail($('pReset'),8.1,10.5,t); trail($('pCtr'),11.7,99,t);
+      const sp=M.eio((t-5.4)/0.3); $('smash').style.strokeDasharray='1 1'; $('smash').style.strokeDashoffset=1-sp; $('smash').style.opacity=(t>5.4?1:0)*(1-M.clamp((t-6.9)/0.3));
+      $('smashH').setAttribute('transform',`translate(${-150+320*sp} ${-30+155*sp}) rotate(${Math.atan2(155,320)*180/Math.PI})`); $('smashH').style.opacity=$('smash').style.opacity*(sp>0.1?1:0);
+      pop($('x1'),2.7,t,3.5); pop($('x2'),5.8,t,6.9); pop($('c1'),9.0,t,10.5); pop($('c2'),12.2,t);
+    }},
+  ],
+  geom:(t,g)=>{const e=M.eio((t-(T-0.6))/0.45); g.sc*=1-0.3*e; g.op*=1-e; return g;},
+});
+</script>

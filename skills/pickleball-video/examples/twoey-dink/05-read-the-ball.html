@@ -1,0 +1,68 @@
+<title>05 Read the ball: two rules</title>
+<style>
+.col{position:absolute;top:-200px;width:560px;height:440px;border-radius:30px;background:#F6F4F0;box-sizing:border-box}
+.col .nm{position:absolute;left:36px;top:28px;font-size:42px;font-weight:600;letter-spacing:-.025em;white-space:nowrap}
+.kv{position:absolute;left:36px;display:flex;align-items:baseline;gap:16px;white-space:nowrap}
+.kv .k{width:90px;font-size:24px;color:#8A8782}
+.kv .v{font-size:31px;font-weight:600;letter-spacing:-.015em}
+.hd{position:absolute;left:-580px;top:-268px;font-size:30px;font-weight:500;color:#8A8782;white-space:nowrap}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Ltech"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em">Technique<span id="ck" style="display:inline-flex;width:48px;height:48px;border-radius:50%;background:#FF5A1F;align-items:center;justify-content:center"></span></div></div>
+  <div class="L" id="Lmeet"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em">How you meet the ball</div></div>
+  <div class="L" id="Lcmp">
+    <div class="hd">Read the ball first, then choose</div>
+    <div class="col" id="colL" style="left:-580px">
+      <div class="nm">No spin</div>
+      <svg class="a" style="left:0;top:0" width="560" height="440" viewBox="0 0 560 440">
+        <g transform="translate(330 205) scale(0.85)">
+          <path id="fL" d="M -198 65 C -128 45, -48 18, 112 -32" pathLength="1" fill="none" stroke="#FF5A1F" stroke-width="8" stroke-linecap="round"/>
+          <polygon id="hL" points="0,-14 24,0 0,14" fill="#FF5A1F"/>
+          <g transform="rotate(20)"><rect x="-8" y="-80" width="16" height="135" rx="8" fill="#0B0B0B"/><rect x="8" y="-70" width="5" height="115" rx="2.5" fill="#FF5A1F"/><rect x="-5" y="55" width="10" height="50" rx="5" fill="#8A8782"/></g>
+          <circle cx="34" cy="0" r="24" fill="#fff" stroke="#0B0B0B" stroke-width="4"/>
+        </g>
+      </svg>
+      <div class="kv" style="top:326px"><span class="k">Face</span><span class="v">Slightly closed</span></div>
+      <div class="kv" style="top:372px"><span class="k">Swing</span><span class="v">More forward</span></div>
+    </div>
+    <div class="col" id="colR" style="left:20px">
+      <div class="nm">Heavy slice</div>
+      <svg class="a" style="left:0;top:0" width="560" height="440" viewBox="0 0 560 440">
+        <g transform="translate(300 210) scale(0.85)">
+          <path id="fR" d="M -38 102 C -32 55, -14 10, 22 -130" pathLength="1" fill="none" stroke="#FF5A1F" stroke-width="8" stroke-linecap="round"/>
+          <polygon id="hR" points="0,-14 24,0 0,14" fill="#FF5A1F"/>
+          <g transform="rotate(-35)"><rect x="-8" y="-80" width="16" height="135" rx="8" fill="#0B0B0B"/><rect x="8" y="-70" width="5" height="115" rx="2.5" fill="#FF5A1F"/><rect x="-5" y="55" width="10" height="50" rx="5" fill="#8A8782"/></g>
+          <circle cx="34" cy="0" r="24" fill="#fff" stroke="#0B0B0B" stroke-width="4"/>
+        </g>
+      </svg>
+      <div class="kv" style="top:326px"><span class="k">Face</span><span class="v">Open</span></div>
+      <div class="kv" style="top:372px"><span class="k">Swing</span><span class="v">Low → high</span></div>
+    </div>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+$('ck').innerHTML=M.icon('check',30,'#fff',3.2);
+const pop=(el,t0,t)=>{const a=M.S(t-t0,16,0.72);el.style.transform=`scale(${Math.max(0,a).toFixed(4)})`;el.style.opacity=M.clamp(a*1.5);};
+const reveal=(path,head,p)=>{path.style.strokeDasharray='1 1';path.style.strokeDashoffset=(1-p).toFixed(4);
+  const L=path.getTotalLength(), q=Math.max(0.001,p), a=path.getPointAtLength(L*q), b=path.getPointAtLength(Math.max(0,L*q-2));
+  head.setAttribute('transform',`translate(${a.x} ${a.y}) rotate(${Math.atan2(a.y-b.y,a.x-b.x)*180/Math.PI})`);
+  const o=p>0.01?1:0; path.style.opacity=o; head.style.opacity=o*M.clamp((p-0.08)/0.1);};
+const colIn=(el,t0,t)=>{const v=M.vis(t,t0,null,{din:0,lin:0.3}); el.style.opacity=v.o; el.style.transform=`translateY(${(1-v.a)*24}px)`; el.style.filter=v.blur>0.05?`blur(${v.blur}px)`:'none';};
+const hl=(el,t0,t)=>{const k=M.S(t-t0,20,0.8); el.style.boxShadow=k>0.01?`inset 0 0 0 ${(5*Math.min(1,k)).toFixed(2)}px #FF5A1F`:'none'; el.style.background=k>0.5?'#FFFFFF':'#F6F4F0';};
+M.scene({
+  W:1920,H:1080,bg:'#E9E7E2',T:10.4,intro:0.1,center:[960,490],
+  SH:{tech:{w:400,h:116,r:58,bg:'#0B0B0B',cam:1.9}, meet:{w:640,h:116,r:58,bg:'#0B0B0B',cam:1.75}, cmp:{w:1260,h:600,r:40,bg:'#FFFFFF',cam:1.14}},
+  start:'tech', SEQ:[[3.34,'meet'],[5.68,'cmp']],
+  layers:[
+    {el:'Ltech',tin:null,tout:3.34,update:(t)=>pop($('ck'),1.35,t)},
+    {el:'Lmeet',tin:3.34,tout:5.68},
+    {el:'Lcmp',tin:5.68,tout:null,update:(t)=>{
+      colIn($('colL'),5.72,t); colIn($('colR'),5.9,t);
+      reveal($('fL'),$('hL'),M.eio((t-6.1)/0.5)); reveal($('fR'),$('hR'),M.eio((t-6.3)/0.5));
+      hl($('colL'),6.69,t); hl($('colR'),7.35,t);
+    }},
+  ],
+  cursor:{size:44,clicks:[6.69,7.35],keys:[[0,300,200],[1.35,300,200],[5.6,300,240],[6.55,-300,150],[6.75,-300,150],[7.25,300,150],[7.45,300,150],[8.4,330,190]]},
+});
+</script>

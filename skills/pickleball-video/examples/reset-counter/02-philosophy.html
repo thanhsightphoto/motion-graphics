@@ -1,0 +1,48 @@
+<title>02 My philosophy: block, block, counter on a read</title>
+<style>
+.slot{position:absolute;top:-40px;width:290px;height:150px;border-radius:28px;background:#F6F4F0;box-sizing:border-box}
+.slot .n{position:absolute;left:24px;top:18px;font-size:22px;font-weight:500;color:#8A8782;white-space:nowrap}
+.slot .v{position:absolute;left:24px;top:62px;display:flex;align-items:center;gap:12px;font-size:38px;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lpill"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em">My philosophy</div></div>
+  <div class="L" id="Lcard">
+    <div class="a" style="left:-470px;top:-140px;font-size:44px;font-weight:600;letter-spacing:-.025em;white-space:nowrap">Block until you get a read</div>
+    <div class="slot" id="s0" style="left:-470px"><div class="n">Speed-up 1</div><div class="v" id="v0"></div></div>
+    <div class="slot" id="s1" style="left:-145px"><div class="n">Speed-up 2</div><div class="v" id="v1"></div></div>
+    <div class="slot" id="s2" style="left:180px"><div class="n">Speed-up 3</div><div class="v" id="v2"></div></div>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+const T=11.0;
+const CK=M.icon('check',30,'#0B0B0B',3);
+// [time, html]: "block" 2.7, "block" 3.15, "good read" 4.7, "go for it" 6.1
+const V=[[[2.7,`${CK}Block`]],[[3.15,`${CK}Block`]],[[4.7,'Good read'],[6.1,'Counter']]];
+const slotIn=[2.0,2.05,2.1];
+M.scene({
+  W:1920,H:1080,bg:null,T,intro:0.1,center:[960,250],
+  SH:{pill:{w:400,h:112,r:56,bg:'#0B0B0B',cam:1.15}, card:{w:1040,h:340,r:40,bg:'#FFFFFF',cam:1.0}},
+  start:'pill', SEQ:[[1.7,'card']],
+  layers:[
+    {el:'Lpill',tin:null,tout:1.7},
+    {el:'Lcard',tin:1.7,tout:null,update:(t)=>{
+      for(let i=0;i<3;i++){
+        const s=$('s'+i), v=$('v'+i), keys=V[i];
+        let k=-1; keys.forEach((x,j)=>{if(t>=x[0])k=j;});
+        if(k<0){v.style.opacity=0;}else{
+          if(v._k!==k){v.innerHTML=keys[k][1]; v._k=k;}
+          const a=M.vis(t,keys[k][0],keys[k+1]?keys[k+1][0]-0.1:null,{din:0,lin:0.24,lout:0.1}); v.style.opacity=a.o; v.style.filter=a.blur>0.05?`blur(${a.blur}px)`:'none';
+        }
+        // the third slot: outlined orange on the read, filled orange on the counter
+        if(i===2){ const read=t>=4.7, ctr=t>=6.1;
+          s.style.background=ctr?'#FF5A1F':'#F6F4F0'; s.style.boxShadow=read&&!ctr?'inset 0 0 0 5px #FF5A1F':'none';
+          v.style.color=ctr?'#fff':'#0B0B0B'; s.querySelector('.n').style.color=ctr?'#FFE3D6':'#8A8782';
+          s.style.transform=`scale(${1+0.06*Math.sin(Math.PI*M.clamp((t-6.1)/0.35))})`; }
+        const si=M.vis(t,slotIn[i],null,{din:0,lin:0.3}); s.style.opacity=si.o;
+      }
+    }},
+  ],
+  geom:(t,g)=>{const e=M.eio((t-(T-0.6))/0.45); g.sc*=1-0.3*e; g.op*=1-e; return g;},
+});
+</script>

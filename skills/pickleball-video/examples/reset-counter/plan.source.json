@@ -1,0 +1,57 @@
+{
+  "title": "Reset & Counter: block without a read, counter with one",
+  "video": "source.mp4",
+  "trimmed_video": "work/trimmed.mp4",
+  "fps": "30000/1001",
+  "clips": [
+    {
+      "id": "01",
+      "title": "Title + the rule: no read → block & reset, good read → counter",
+      "line": "“This zone: if I don't see it, I block and reset. If I see it, I go for it…”",
+      "in": 0.0,
+      "out": 14.0,
+      "kind": "panel",
+      "file": "out/01-title-rule.mov"
+    },
+    {
+      "id": "02",
+      "title": "My philosophy: block, block, counter on a read",
+      "line": "“I'm gonna block, block, but if I can get a good read on you, I'm gonna go for it.”",
+      "in": 24.5,
+      "out": 35.5,
+      "kind": "panel",
+      "file": "out/02-philosophy.mov"
+    },
+    {
+      "id": "03",
+      "title": "Blind counter (net / pop-up) vs read first (reset / counter)",
+      "line": "(no talking: the drill plays underneath)",
+      "in": 35.5,
+      "out": 52.5,
+      "kind": "panel",
+      "file": "out/03-blind-vs-read.mov"
+    },
+    {
+      "id": "04",
+      "title": "Read tracker: good reads called live",
+      "line": "“Nice… Good read… Good read… Nice, good read. I like this drill!”",
+      "in": 53.0,
+      "out": 86.5,
+      "kind": "panel",
+      "file": "out/04-read-tracker.mov"
+    },
+    {
+      "id": "05",
+      "title": "Off-speed is still a speed-up: same read",
+      "line": "“You can off-speed if you want, but it's still an aggressive shot.”",
+      "in": 100.5,
+      "out": 109.5,
+      "kind": "panel",
+      "file": "out/05-off-speed.mov"
+    }
+  ],
+  "notes": [
+    "All graphics are transparent panels in the sky above the court; the rally plays underneath.",
+    "Ball paths in clip 03 are schematic, not traced from the footage. The read tracker counts the 'good read' calls heard on the audio."
+  ]
+}

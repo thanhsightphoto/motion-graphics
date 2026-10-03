@@ -1,0 +1,98 @@
+<title>02 No spin: slightly closed, more forward</title>
+<style>
+.seg{position:absolute;left:-450px;top:-262px;width:460px;height:68px;border-radius:34px;background:#F1EFEB}
+.seg .ind{position:absolute;top:6px;height:56px;border-radius:28px;background:#0B0B0B}
+.seg .o{position:absolute;top:0;width:230px;height:68px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;letter-spacing:-.01em}
+.chip{display:inline-block;font-size:24px;font-weight:500;border-radius:999px;padding:8px 18px;background:#F1EFEB;color:#0B0B0B}
+.kv{position:absolute;left:130px;display:flex;align-items:baseline;gap:18px;white-space:nowrap}
+.kv .k{width:96px;font-size:26px;color:#8A8782}
+.kv .v{font-size:34px;font-weight:600;letter-spacing:-.015em}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lcard">
+    <div class="seg"><div class="ind" id="ind"></div><div class="o" id="o1" style="left:0">Heavy slice</div><div class="o" id="o2" style="left:230px">No spin</div></div>
+    <div class="a" style="left:-450px;top:-172px"><span class="chip" id="tip">Like table tennis</span></div>
+    <div class="kv" style="top:-250px"><span class="k">Face</span><span class="v" id="vFace"></span></div>
+    <div class="kv" style="top:-200px"><span class="k">Swing</span><span class="v" id="vSwing"></span></div>
+    <svg class="a" style="left:-500px;top:-290px" width="1000" height="580" viewBox="-500 -290 1000 580">
+     <g transform="translate(-30 -40) scale(1.1)">
+      <line x1="-400" y1="270" x2="470" y2="270" stroke="#E2DFD9" stroke-width="4" stroke-linecap="round"/>
+      <rect x="234" y="80" width="12" height="190" rx="4" fill="#0B0B0B"/>
+      <path id="pOut" d="M -140 160 C -20 -100, 170 -120, 430 262" fill="none" stroke="#B9B5AE" stroke-width="4" stroke-dasharray="3 14" stroke-linecap="round" opacity="0"/>
+      <path id="sUp" d="M -210 262 C -204 215, -186 170, -150 30" pathLength="1" fill="none" stroke="#FF5A1F" stroke-width="7" stroke-linecap="round"/>
+      <polygon id="hUp" points="0,-13 22,0 0,13" fill="#FF5A1F"/>
+      <path id="sFw" d="M -370 225 C -300 205, -220 178, -60 128" pathLength="1" fill="none" stroke="#FF5A1F" stroke-width="7" stroke-linecap="round"/>
+      <polygon id="hFw" points="0,-13 22,0 0,13" fill="#FF5A1F"/>
+      <g id="pad">
+        <rect x="-8" y="-80" width="16" height="135" rx="8" fill="#0B0B0B"/>
+        <rect x="8" y="-70" width="5" height="115" rx="2.5" fill="#FF5A1F"/>
+        <rect x="-5" y="55" width="10" height="50" rx="5" fill="#8A8782"/>
+        <line x1="18" y1="-58" x2="72" y2="-58" stroke="#FF5A1F" stroke-width="5" stroke-linecap="round"/><polygon points="70,-70 92,-58 70,-46" fill="#FF5A1F"/>
+      </g>
+      <g id="ball">
+        <circle r="24" fill="#FFFFFF" stroke="#0B0B0B" stroke-width="4"/>
+        <circle cx="-8" cy="-6" r="3" fill="#0B0B0B"/><circle cx="7" cy="-9" r="3" fill="#0B0B0B"/><circle cx="2" cy="8" r="3" fill="#0B0B0B"/>
+        <g id="spin"><path d="M 0 -42 A 42 42 0 1 1 -42 0" fill="none" stroke="#0B0B0B" stroke-width="4" stroke-linecap="round"/><polygon points="-52,-4 -42,12 -32,-4" fill="#0B0B0B"/></g>
+      </g>
+     </g>
+    </svg>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+const PX=-172, PY=160, BX=-140, BY=160;
+const W=(t,x,y)=>[t,x*1.1-30,y*1.1-40];
+const blurOp=(el,v)=>{el.style.opacity=v.o.toFixed(4);el.style.filter=v.blur>0.05?`blur(${v.blur.toFixed(2)}px)`:'none';};
+const swap=(el,keys,t)=>{let i=-1;for(let k=0;k<keys.length;k++) if(t>=keys[k][0]) i=k;
+  if(i<0){el.style.opacity=0;return;} const nx=keys[i+1]?keys[i+1][0]-0.12:null;
+  M.setText(el,keys[i][1]); blurOp(el,M.vis(t,keys[i][0],nx,{din:0,lin:0.22,lout:0.12}));};
+const pop=(el,t0,t)=>{const a=M.S(t-t0,16,0.72);el.style.transform=`scale(${Math.max(0,a).toFixed(4)})`;el.style.opacity=M.clamp(a*1.5);};
+const reveal=(path,head,p,show)=>{path.style.strokeDasharray='1 1';path.style.strokeDashoffset=(1-p).toFixed(4);
+  const L=path.getTotalLength(), q=Math.max(0.001,p), a=path.getPointAtLength(L*q), b=path.getPointAtLength(Math.max(0,L*q-2));
+  const ang=Math.atan2(a.y-b.y,a.x-b.x)*180/Math.PI; head.setAttribute('transform',`translate(${a.x} ${a.y}) rotate(${ang})`);
+  const o=p>0.01?show:0; path.style.opacity=o; head.style.opacity=o*M.clamp((p-0.08)/0.1);};
+const at=(path,u)=>{const L=path.getTotalLength();return path.getPointAtLength(L*M.clamp(u));};
+// the paddle travels along its swing path; offset 0 = face on the ball at contact
+const closestU=(el,x,y)=>{let best=0,bd=1e9;for(let i=0;i<=400;i++){const q=at(el,i/400),d=(q.x-x)**2+(q.y-y)**2;if(d<bd){bd=d;best=i/400;}}return best;};
+const inQ=x=>{x=M.clamp(x);return x*x;};
+const segU=(segs,u0)=>t=>{let u=u0;for(const [a,b,f,g,e] of segs){if(t>=b)u=g;else if(t>a)u=f+(g-f)*e((t-a)/(b-a));}return u;};
+const UCF=closestU($('sFw'),PX,PY);
+// wind back, drive forward through the ball (contact 3.9)
+const uFw=segU([[3.15,3.5,UCF,0,M.eio],[3.5,3.9,0,UCF,inQ],[3.9,4.2,UCF,1,M.eo]],UCF);
+const off=(el,uc,u)=>{const a=at(el,u),c=at(el,uc);return [a.x-c.x,a.y-c.y];};
+
+// toggle indicator: leading edge fast, trailing slow
+const iL=M.track(6,[[1.49,236,M.SLOW]]), iR=M.track(224,[[1.49,454,M.FAST]]);
+// cursor: click "No spin" on không, then tilt the paddle top forward on tăng
+const CK=[[0,300,120],[0.9,300,120],[1.38,-100,-227],[1.52,-100,-227],[2.3,-218,95],[2.62,-218,95],[3.1,-144.6,84.8],[3.2,-144.6,84.8],[3.9,150,40],[6.1,150,40]].map((k,i)=>i>=4&&i<=7?W(...k):(i>=8?W(...k):k));
+const cur=M.path(CK);
+const [,PWX,PWY]=W(0,PX,PY);
+const angOf=c=>Math.atan2(c.x-PWX,-(c.y-PWY))*180/Math.PI;
+const OPEN=angOf({x:-218*1.1-30,y:95*1.1-40});
+const theta=t=>{ if(t<2.62) return OPEN; if(t<3.1) return angOf(cur(t)); return angOf(cur(3.1)); };
+
+M.scene({
+  W:1920,H:1080,bg:'#E9E7E2',T:8.1,intro:0.02,center:[960,490],
+  SH:{card:{w:1000,h:580,r:40,bg:'#FFFFFF',cam:1.42}},
+  start:'card', SEQ:[],
+  layers:[
+    {el:'Lcard',tin:0.02,tout:null,o:{din:0,lin:0.15},update:(t)=>{
+      const L=iL(t), R=iR(t); Object.assign($('ind').style,{left:L+'px',width:(R-L)+'px'});
+      const k=M.clamp((t-1.55)/0.2); $('o1').style.color=k<0.5?'#fff':'#0B0B0B'; $('o2').style.color=k<0.5?'#0B0B0B':'#fff';
+      swap($('vFace'),[[0,'Open'],[2.82,'Slightly closed']],t);
+      swap($('vSwing'),[[0,'Low → high'],[3.3,'More forward']],t);
+      pop($('tip'),4.3,t);
+      const [dx,dy]=off($('sFw'),UCF,uFw(t)); $('pad').setAttribute('transform',`translate(${(PX+dx).toFixed(2)} ${(PY+dy).toFixed(2)}) rotate(${theta(t).toFixed(3)})`);
+      reveal($('sUp'),$('hUp'),1,1-M.clamp((t-2.6)/0.25));
+      reveal($('sFw'),$('hFw'),t<3.5?0:(t<4.2?uFw(t):1),1);
+      let b, bo=1;
+      if(t<3.9){ b={x:BX,y:BY}; }
+      else { const u=M.eio((t-3.9)/1.0); b=at($('pOut'),u); bo=1-M.clamp((t-4.7)/0.2); }
+      $('ball').setAttribute('transform',`translate(${b.x.toFixed(2)} ${b.y.toFixed(2)})`); $('ball').style.opacity=bo;
+      $('spin').setAttribute('transform',`rotate(${(t*320)%360})`); $('spin').style.opacity=1-M.clamp((t-1.6)/0.25);
+      $('pOut').style.opacity=t<3.9?0:0.9*Math.min(1,M.eio((t-3.9)/1.0)*4);
+    }},
+  ],
+  cursor:{size:44,clicks:[1.49],drags:[[2.62,3.1]],keys:CK},
+});
+</script>

@@ -1,0 +1,75 @@
+<title>03 Hips lift the arm: stand up, make an arc</title>
+<style>
+.ttl{position:absolute;white-space:nowrap;font-size:44px;font-weight:600;letter-spacing:-.025em}
+.nd{position:absolute;left:-150px;width:330px;height:88px;border-radius:26px;display:flex;align-items:center;padding-left:30px;box-sizing:border-box;font-size:34px;font-weight:600;letter-spacing:-.015em}
+.lbl{position:absolute;white-space:nowrap;font-size:32px;font-weight:600;letter-spacing:-.015em}
+.sub{font-size:24px;font-weight:500;color:#8A8782;letter-spacing:0}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lpill"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em"><span id="icUp"></span>Use your hips</div></div>
+  <div class="L" id="Lchain">
+    <div class="ttl" style="left:-330px;top:-250px">Power goes up</div>
+    <div class="a" style="left:-230px;top:-150px;width:14px;height:370px;border-radius:7px;background:#EDEAE5"></div>
+    <div class="a" id="fill" style="left:-230px;width:14px;border-radius:7px;background:#FF5A1F"></div>
+    <div class="nd" id="n2" style="top:-160px">Paddle</div>
+    <div class="nd" id="n1" style="top:-20px">Arm</div>
+    <div class="nd" id="n0" style="top:120px">Hips</div>
+  </div>
+  <div class="L" id="Lud">
+    <svg class="a" style="left:-500px;top:-280px" width="1000" height="560" viewBox="-500 -280 1000 560">
+      <circle cx="-120" cy="170" r="16" fill="#0B0B0B"/>
+      <line id="aUp" x1="-120" y1="150" x2="-120" y2="-170" stroke="#FF5A1F" stroke-width="16" stroke-linecap="round"/>
+      <polygon id="hUp" points="-230,0 -200,-44 -170,0" fill="#FF5A1F"/>
+      <line id="aFw" x1="-98" y1="170" x2="360" y2="170" stroke="#0B0B0B" stroke-width="16" stroke-linecap="round"/>
+      <polygon id="hFw" points="0,-30 44,0 0,30" fill="#0B0B0B"/>
+      <g transform="translate(140 170)"><g id="xFw"><circle r="38" fill="#D93A2B"/><path d="M -12 -12 L 12 12 M 12 -12 L -12 12" stroke="#fff" stroke-width="6" stroke-linecap="round"/></g></g>
+    </svg>
+    <div class="lbl" id="lUp" style="left:-70px;top:-210px">Stand up <span class="sub">lift with the hips</span></div>
+    <div class="lbl" id="lFw" style="left:-70px;top:210px;color:#8A8782">Don't step forward</div>
+  </div>
+  <div class="L" id="Larc">
+    <div class="ttl" style="left:-450px;top:-250px">Make an arc</div>
+    <svg class="a" style="left:-500px;top:-280px" width="1000" height="560" viewBox="-500 -280 1000 560">
+      <line x1="-460" y1="230" x2="460" y2="230" stroke="#E2DFD9" stroke-width="4" stroke-linecap="round"/>
+      <rect x="-6" y="60" width="12" height="170" rx="4" fill="#0B0B0B"/>
+      <path id="arc" d="M -380 160 C -250 -210, 180 -210, 380 225" pathLength="1" fill="none" stroke="#FF5A1F" stroke-width="7" stroke-linecap="round"/>
+      <g id="ball"><circle r="24" fill="#FFFFFF" stroke="#0B0B0B" stroke-width="4"/><circle cx="-8" cy="-6" r="3" fill="#0B0B0B"/><circle cx="7" cy="-9" r="3" fill="#0B0B0B"/><circle cx="2" cy="8" r="3" fill="#0B0B0B"/></g>
+    </svg>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+$('icUp').innerHTML=M.icon('arrow',40,'#FF5A1F',3.2); $('icUp').style.transform='rotate(-90deg)';
+const pop=(el,t0,t)=>{const a=M.S(t-t0,16,0.72);el.style.transform=`scale(${Math.max(0,a).toFixed(4)})`;el.style.opacity=M.clamp(a*1.5);};
+const NT=[1.34,1.89,3.95], LIT=[1.45,2.51,4.1];
+// rail fill: bottom at y=220, reaches the arm node on "lên", the paddle on the second "hips"
+const fillTop=M.track(220,[[1.45,164],[2.51,24,M.SLOW],[4.1,-116,M.SLOW]]);
+const up=M.track(0,[[5.68,1,M.MORPH]]), fw=M.track(0,[[6.71,1,M.MORPH]]);
+M.scene({
+  W:1920,H:1080,bg:'#E9E7E2',T:13.5,intro:0.1,center:[960,490],
+  SH:{pill:{w:480,h:116,r:58,bg:'#0B0B0B',cam:1.85}, chain:{w:760,h:580,r:40,bg:'#FFFFFF',cam:1.42}, ud:{w:1000,h:560,r:40,bg:'#FFFFFF',cam:1.42}, arc:{w:1000,h:560,r:40,bg:'#FFFFFF',cam:1.42}},
+  start:'pill', SEQ:[[1.34,'chain'],[5.55,'ud'],[9.75,'arc']],
+  layers:[
+    {el:'Lpill',tin:null,tout:1.34},
+    {el:'Lchain',tin:1.34,tout:5.55,update:(t)=>{
+      for(let i=0;i<3;i++){const n=$('n'+i); pop(n,NT[i],t); const on=t>=LIT[i];
+        n.style.background=on?(i===0?'#FF5A1F':'#0B0B0B'):'#F1EFEB'; n.style.color=on?'#fff':'#0B0B0B';}
+      const ft=fillTop(t); Object.assign($('fill').style,{top:ft+'px',height:Math.max(0,220-ft)+'px',opacity:t<1.45?0:1});
+    }},
+    {el:'Lud',tin:5.55,tout:9.75,update:(t)=>{
+      const u=M.clamp(up(t),0,1.05), yU=150-320*u; $('aUp').setAttribute('y2',yU);
+      $('hUp').setAttribute('points',`-150,${yU} -120,${yU-44} -90,${yU}`); $('aUp').style.opacity=$('hUp').style.opacity=u>0.01?1:0;
+      const f=M.clamp(fw(t),0,1.05), xF=-98+458*f; $('aFw').setAttribute('x2',xF); $('hFw').setAttribute('transform',`translate(${xF} 170)`);
+      const dim=M.clamp((t-7.25)/0.3); const col=dim>0.5?'#D5D1CA':'#0B0B0B';
+      $('aFw').setAttribute('stroke',col); $('hFw').setAttribute('fill',col); $('aFw').style.opacity=$('hFw').style.opacity=f>0.01?1:0;
+      pop($('lUp'),5.9,t); pop($('lFw'),6.9,t); pop($('xFw'),7.2,t);
+    }},
+    {el:'Larc',tin:9.75,tout:null,update:(t)=>{
+      const p=M.eio((t-9.95)/0.95), a=$('arc'); a.style.strokeDasharray='1 1'; a.style.strokeDashoffset=(1-p).toFixed(4); a.style.opacity=p>0.01?1:0;
+      const L=a.getTotalLength(), u=M.eio((t-10.3)/1.0), b=a.getPointAtLength(L*M.clamp(u));
+      $('ball').setAttribute('transform',`translate(${b.x.toFixed(2)} ${b.y.toFixed(2)})`); $('ball').style.opacity=M.clamp((t-10.1)/0.15);
+    }},
+  ],
+  cursor:{size:44,clicks:[0.33,7.2],keys:[[0,420,260],[0.1,120,40],[0.33,120,40],[1.2,120,40],[2.2,300,200],[6.6,300,260],[7.1,144,178],[7.3,144,178],[8.2,330,-120],[11.5,330,-120]]},
+});
+</script>

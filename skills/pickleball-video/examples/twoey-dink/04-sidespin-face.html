@@ -1,0 +1,97 @@
+<title>04 Sidespin: square the face</title>
+<style>
+.ttl{font-size:46px;font-weight:600;letter-spacing:-.025em}
+.chip{display:inline-block;font-size:24px;font-weight:500;border-radius:999px;padding:6px 16px;background:#F1EFEB;color:#0B0B0B}
+.kv{position:absolute;left:130px;display:flex;align-items:baseline;gap:18px;white-space:nowrap}
+.kv .k{width:96px;font-size:26px;color:#8A8782}
+.kv .v{font-size:34px;font-weight:600;letter-spacing:-.015em}
+</style>
+<div data-slot="shape">
+  <div class="L" id="Lpill"><div class="row" style="transform:translate(-50%,-50%);gap:16px;color:#fff;font-size:44px;font-weight:600;letter-spacing:-.02em">Brushed slice<span style="font-size:22px;font-weight:600;letter-spacing:0;border-radius:999px;padding:6px 14px;background:#FF5A1F">front view</span></div></div>
+  <div class="L" id="Lcard">
+    <div class="row" style="left:-450px;top:-240px;gap:14px"><span class="ttl">Sidespin</span><span class="chip" id="c1">Cuts sideways</span></div>
+    <div class="kv" style="top:-250px" id="r1"><span class="k">Ball</span><span class="v" id="vBall"></span></div>
+    <div class="kv" style="top:-200px" id="r2"><span class="k">Face</span><span class="v" id="vFace"></span></div>
+    <div class="kv" style="top:-150px" id="r3"><span class="k">Result</span><span class="v" id="vRes"></span></div>
+    <svg class="a" style="left:-500px;top:-290px" width="1000" height="580" viewBox="-500 -290 1000 580">
+      <rect x="-460" y="-40" width="920" height="90" fill="#EDEAE5"/>
+      <g stroke="#DCD8D1" stroke-width="2">
+        <line x1="-460" y1="-10" x2="460" y2="-10"/><line x1="-460" y1="20" x2="460" y2="20"/>
+      </g>
+      <rect x="-460" y="-46" width="920" height="10" rx="3" fill="#0B0B0B"/>
+      <path id="pFail" d="M 40 150 Q 110 -10 150 20" fill="none"/>
+      <path id="pWin" d="M 40 150 Q 40 -40 10 -115" fill="none"/>
+      <path id="drift" d="M 40 110 Q 100 60 190 70" fill="none" stroke="#B9B5AE" stroke-width="4" stroke-dasharray="3 14" stroke-linecap="round"/>
+      <g id="pad">
+        <rect x="-62" y="-85" width="124" height="160" rx="52" fill="#0B0B0B"/>
+        <rect x="-50" y="-73" width="100" height="136" rx="42" fill="none" stroke="#FF5A1F" stroke-width="4"/>
+        <rect x="-15" y="75" width="30" height="70" rx="12" fill="#8A8782"/>
+      </g>
+      <g id="ball">
+        <circle r="30" fill="#FFFFFF" stroke="#0B0B0B" stroke-width="4"/>
+        <circle cx="-10" cy="-7" r="3.5" fill="#0B0B0B"/><circle cx="9" cy="-11" r="3.5" fill="#0B0B0B"/><circle cx="2" cy="10" r="3.5" fill="#0B0B0B"/>
+        <g id="axis">
+          <line id="ax" x1="0" y1="-58" x2="0" y2="58" stroke="#0B0B0B" stroke-width="3" stroke-dasharray="6 7" stroke-linecap="round"/>
+          <path id="sw" d="M -62 6 A 62 20 0 1 0 50 12" fill="none" stroke="#0B0B0B" stroke-width="4" stroke-linecap="round" pathLength="1"/>
+          <polygon id="swh" points="44,2 62,14 44,24" fill="#0B0B0B"/>
+        </g>
+      </g>
+      <g transform="translate(150 12)"><g id="xB"><circle r="30" fill="#D93A2B"/><path d="M -10 -10 L 10 10 M 10 -10 L -10 10" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g></g>
+      <g transform="translate(-20 -175)"><g id="ok"><circle r="30" fill="#0B0B0B"/><path d="M -12 1 L -3 10 L 13 -9" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+    </svg>
+  </div>
+</div><!--/shape-->
+<script>
+const $=id=>document.getElementById(id);
+const blurOp=(el,v)=>{el.style.opacity=v.o.toFixed(4);el.style.filter=v.blur>0.05?`blur(${v.blur.toFixed(2)}px)`:'none';};
+const swap=(el,keys,t)=>{let i=-1;for(let k=0;k<keys.length;k++) if(t>=keys[k][0]) i=k;
+  if(i<0){el.style.opacity=0;return;} const nx=keys[i+1]?keys[i+1][0]-0.12:null;
+  M.setText(el,keys[i][1]); blurOp(el,M.vis(t,keys[i][0],nx,{din:0,lin:0.22,lout:0.12}));};
+const pop=(el,t0,t)=>{const a=M.S(t-t0,16,0.72);el.style.transform=`scale(${Math.max(0,a).toFixed(4)})`;el.style.opacity=M.clamp(a*1.5);};
+const at=(path,u)=>{const L=path.getTotalLength();return path.getPointAtLength(L*M.clamp(u));};
+const PCX=-110, PCY=150, TOP=-85;   // paddle centre and its top edge (local)
+const BX=40, BY=150;
+// cursor grabs the paddle's top edge: tilt it on "đóng nghiêng", square it on "đóng thẳng"
+const TILT=-28*Math.PI/180;
+const topAt=a=>[PCX-TOP*Math.sin(a), PCY+TOP*Math.cos(a)];
+const [tx0,ty0]=topAt(0), [tx1,ty1]=topAt(TILT);
+const CK=[[0,380,240],[1.5,380,240],[2.4,300,230],[6.3,300,230],[6.78,tx0,ty0],[6.86,tx0,ty0],[7.3,tx1,ty1],[7.4,tx1,ty1],[8.2,320,230],[10.2,320,230],[10.62,tx1,ty1],[10.7,tx1,ty1],[11.1,tx0,ty0],[11.2,tx0,ty0],[11.9,330,230],[12.4,330,230]];
+const cur=M.path(CK);
+const angOf=c=>Math.atan2(c.x-PCX,-(c.y-PCY))*180/Math.PI;
+const theta=t=>{ if(t<6.86) return 0; if(t<7.3) return angOf(cur(t)); if(t<10.7) return angOf(cur(7.3)); if(t<11.1) return angOf(cur(t)); return 0; };
+const tilt=M.track(0,[[4.67,-24]]);
+
+M.scene({
+  W:1920,H:1080,bg:'#E9E7E2',T:14.4,intro:0.1,center:[960,490],
+  SH:{pill:{w:600,h:116,r:58,bg:'#0B0B0B',cam:1.75}, card:{w:1000,h:580,r:40,bg:'#FFFFFF',cam:1.42}},
+  start:'pill', SEQ:[[1.88,'card']],
+  layers:[
+    {el:'Lpill',tin:null,tout:1.88},
+    {el:'Lcard',tin:1.88,tout:null,update:(t)=>{
+      pop($('c1'),3.4,t);
+      swap($('vBall'),[[2.1,'Spinning'],[3.4,'Sidespin'],[4.7,'Tilted axis']],t);
+      swap($('vFace'),[[6.9,'Angled'],[10.8,'Square']],t);
+      swap($('vRes'),[[8.1,'Drops'],[11.9,'Goes up']],t);
+      $('vRes').style.color=t<11.9?'#D93A2B':'#0B0B0B';
+      $('r2').style.opacity=t<6.9?0:1; $('r3').style.opacity=t<8.1?0:1;
+      // paddle
+      $('pad').setAttribute('transform',`translate(${PCX} ${PCY}) rotate(${theta(t).toFixed(3)})`); $('pad').style.opacity=M.clamp((t-6.4)/0.25);
+      // spin arrow: draws on "xé ngang", then keeps turning
+      const sp=M.eio((t-3.28)/0.45), sw=$('sw'); sw.style.strokeDasharray='1 1'; sw.style.strokeDashoffset=(1-sp).toFixed(4); sw.style.opacity=sp>0.01?1:0;
+      $('swh').style.opacity=sp>0.95?1:0;
+      $('ax').style.opacity=M.clamp((t-4.5)/0.2);
+      $('axis').setAttribute('transform',`rotate(${tilt(t).toFixed(3)})`);
+      $('drift').style.opacity=t<5.31?0:0.9*M.clamp((t-5.31)/0.3)*(1-M.clamp((t-6.6)/0.3));
+      // ball
+      let b={x:BX,y:BY}, bo=M.clamp((t-2.0)/0.2), sc=1;
+      if(t>=7.6 && t<9.3){ const u=M.eio((t-7.6)/0.5); b=at($('pFail'),u); if(t>8.1){const d=M.eo((t-8.1)/0.4); b={x:150,y:20+60*d*d};} bo=1-M.clamp((t-9.0)/0.25); }
+      else if(t>=9.3 && t<11.3){ bo=M.clamp((t-9.4)/0.2); }
+      else if(t>=11.3){ const u=M.eio((t-11.3)/0.55); b=at($('pWin'),u); sc=1-0.4*u; }
+      $('ball').setAttribute('transform',`translate(${b.x.toFixed(2)} ${b.y.toFixed(2)}) scale(${sc.toFixed(4)})`); $('ball').style.opacity=bo;
+      pop($('xB'),8.1,t); $('xB').style.opacity=Math.min(+$('xB').style.opacity,1-M.clamp((t-9.2)/0.25));
+      pop($('ok'),11.86,t);
+    }},
+  ],
+  cursor:{size:44,drags:[[6.86,7.3],[10.7,11.1]],keys:CK},
+});
+</script>
